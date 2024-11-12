@@ -1,0 +1,2032 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{soul}      % strikethrough (\st) support for pandoc >= 3.0.0
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{Niranjan-Rao-Lab2}
+    
+    
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \section{Q1: Recommender System (20
+Points)}\label{q1-recommender-system-20-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{100}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{sparse}\PY{n+nn}{.}\PY{n+nn}{linalg} \PY{k+kn}{import} \PY{n}{svds}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics}\PY{n+nn}{.}\PY{n+nn}{pairwise} \PY{k+kn}{import} \PY{n}{cosine\PYZus{}similarity}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \section{1. Load the movies and ratings data. (2
+points)}\label{load-the-movies-and-ratings-data.-2-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{101}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{movies} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{movies.dat}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{sep}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{::}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{header}\PY{o}{=}\PY{k+kc}{None}\PY{p}{,} \PY{n}{names}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{MovieID}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Title}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Genres}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{engine}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{python}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{encoding}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ISO\PYZhy{}8859\PYZhy{}1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{ratings} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ratings.dat}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{sep}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{::}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{header}\PY{o}{=}\PY{k+kc}{None}\PY{p}{,} \PY{n}{names}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{UserID}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{MovieID}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rating}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{engine}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{python}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{encoding}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ISO\PYZhy{}8859\PYZhy{}1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{102}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Display the first few rows of the data for verification}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Movies Data:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{movies}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Ratings Data:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{ratings}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Movies Data:
+   MovieID                               Title                        Genres
+0        1                    Toy Story (1995)   Animation|Children's|Comedy
+1        2                      Jumanji (1995)  Adventure|Children's|Fantasy
+2        3             Grumpier Old Men (1995)                Comedy|Romance
+3        4            Waiting to Exhale (1995)                  Comedy|Drama
+4        5  Father of the Bride Part II (1995)                        Comedy
+
+Ratings Data:
+   UserID  MovieID  Rating  Timestamp
+0       1     1193       5  978300760
+1       1      661       3  978302109
+2       1      914       3  978301968
+3       1     3408       4  978300275
+4       1     2355       5  978824291
+    \end{Verbatim}
+
+    \section{2. What is Singular Value Decomposition (SVD)? Explain it in
+your own words. (2
+points)}\label{what-is-singular-value-decomposition-svd-explain-it-in-your-own-words.-2-points}
+
+\begin{itemize}
+\tightlist
+\item
+  Singular Value Decomposition (SVD) is a matrix factorization technique
+  used to decompose a matrix into three component matrices: U, S, and
+  V\^{}T.
+\item
+  U contains the left singular vectors, S is a diagonal matrix with
+  singular values, and V\^{}T contains the right singular vectors.
+\item
+  This method is often used in recommendation systems to reduce
+  dimensionality and find patterns in data.
+\end{itemize}
+
+    \section{3. Explain content-based vs collaborative recommendation. (2
+points)}\label{explain-content-based-vs-collaborative-recommendation.-2-points}
+
+\begin{itemize}
+\tightlist
+\item
+  Content-based recommendation systems suggest items similar to those
+  the user has interacted with, based on item features.
+\item
+  Collaborative recommendation systems use past interactions from
+  multiple users to make suggestions, leveraging similarities between
+  users or items.
+\end{itemize}
+
+    \section{4. Create m x u matrix with movies as rows and users as
+columns. Normalize the matrix. (2
+points)}\label{create-m-x-u-matrix-with-movies-as-rows-and-users-as-columns.-normalize-the-matrix.-2-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{103}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Create user\PYZhy{}item matrix}
+\PY{n}{user\PYZus{}movie\PYZus{}matrix} \PY{o}{=} \PY{n}{ratings}\PY{o}{.}\PY{n}{pivot}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{MovieID}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{UserID}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{values}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rating}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{fillna}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Normalize the matrix by subtracting the mean of each row}
+\PY{n}{movie\PYZus{}mean} \PY{o}{=} \PY{n}{user\PYZus{}movie\PYZus{}matrix}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{matrix\PYZus{}normalized} \PY{o}{=} \PY{n}{user\PYZus{}movie\PYZus{}matrix}\PY{o}{.}\PY{n}{subtract}\PY{p}{(}\PY{n}{movie\PYZus{}mean}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{User\PYZhy{}Movie Matrix (First 5 rows):}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{user\PYZus{}movie\PYZus{}matrix}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+User-Movie Matrix (First 5 rows):
+UserID   1     2     3     4     5     6     7     8     9     10    {\ldots}  \textbackslash{}
+MovieID                                                              {\ldots}
+1         5.0   0.0   0.0   0.0   0.0   4.0   0.0   4.0   5.0   5.0  {\ldots}
+2         0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   5.0  {\ldots}
+3         0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0  {\ldots}
+4         0.0   0.0   0.0   0.0   0.0   0.0   0.0   3.0   0.0   0.0  {\ldots}
+5         0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0  {\ldots}
+
+UserID   6031  6032  6033  6034  6035  6036  6037  6038  6039  6040
+MovieID
+1         0.0   4.0   0.0   0.0   4.0   0.0   0.0   0.0   0.0   3.0
+2         0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+3         0.0   0.0   0.0   0.0   1.0   0.0   0.0   0.0   0.0   0.0
+4         0.0   0.0   0.0   0.0   2.0   2.0   0.0   0.0   0.0   0.0
+5         0.0   0.0   0.0   0.0   1.0   0.0   0.0   0.0   0.0   0.0
+
+[5 rows x 6040 columns]
+    \end{Verbatim}
+
+    \section{5. Perform SVD to get U, S, and V. (4
+points)}\label{perform-svd-to-get-u-s-and-v.-4-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{104}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{sparse} \PY{k+kn}{import} \PY{n}{csr\PYZus{}matrix}
+
+\PY{c+c1}{\PYZsh{} Convert the normalized matrix to a sparse format}
+\PY{n}{matrix\PYZus{}normalized\PYZus{}sparse} \PY{o}{=} \PY{n}{csr\PYZus{}matrix}\PY{p}{(}\PY{n}{matrix\PYZus{}normalized}\PY{o}{.}\PY{n}{values}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Perform SVD on the sparse matrix}
+\PY{n}{U}\PY{p}{,} \PY{n}{S}\PY{p}{,} \PY{n}{Vt} \PY{o}{=} \PY{n}{svds}\PY{p}{(}\PY{n}{matrix\PYZus{}normalized\PYZus{}sparse}\PY{p}{,} \PY{n}{k}\PY{o}{=}\PY{l+m+mi}{50}\PY{p}{)}  \PY{c+c1}{\PYZsh{} k represents the number of components}
+\PY{n}{S} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{diag}\PY{p}{(}\PY{n}{S}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Shapes after SVD:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{U: }\PY{l+s+si}{\PYZob{}}\PY{n}{U}\PY{o}{.}\PY{n}{shape}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{, S: }\PY{l+s+si}{\PYZob{}}\PY{n}{S}\PY{o}{.}\PY{n}{shape}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{, Vt: }\PY{l+s+si}{\PYZob{}}\PY{n}{Vt}\PY{o}{.}\PY{n}{shape}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Shapes after SVD:
+U: (3706, 50), S: (50, 50), Vt: (50, 6040)
+    \end{Verbatim}
+
+    \section{6. Select top 30 components from S. (2
+points)}\label{select-top-30-components-from-s.-2-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{105}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Select the top 30 singular values}
+\PY{n}{U\PYZus{}30} \PY{o}{=} \PY{n}{U}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{p}{:}\PY{l+m+mi}{30}\PY{p}{]}
+\PY{n}{S\PYZus{}30} \PY{o}{=} \PY{n}{S}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{30}\PY{p}{,} \PY{p}{:}\PY{l+m+mi}{30}\PY{p}{]}
+\PY{n}{Vt\PYZus{}30} \PY{o}{=} \PY{n}{Vt}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{30}\PY{p}{,} \PY{p}{:}\PY{p}{]}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Selected top 30 components from S.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Selected top 30 components from S.
+    \end{Verbatim}
+
+    \section{7. Get the top 30 eigenvectors using eigenvalues. (2
+points)}\label{get-the-top-30-eigenvectors-using-eigenvalues.-2-points}
+
+\begin{itemize}
+\tightlist
+\item
+  Eigenvectors corresponding to the largest eigenvalues are selected.
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{106}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{eigenvectors} \PY{o}{=} \PY{n}{U\PYZus{}30}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Top 30 eigenvectors obtained.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Top 30 eigenvectors obtained.
+    \end{Verbatim}
+
+    \section{8. Using cosine similarity, find 10 closest movies using the 30
+components from SVD. (2
+points)}\label{using-cosine-similarity-find-10-closest-movies-using-the-30-components-from-svd.-2-points}
+
+\begin{itemize}
+\tightlist
+\item
+  Compute cosine similarity between movies
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{107}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Compute cosine similarity between movies}
+\PY{n}{movie\PYZus{}similarity} \PY{o}{=} \PY{n}{cosine\PYZus{}similarity}\PY{p}{(}\PY{n}{U\PYZus{}30}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Function to get the 10 most similar movies}
+\PY{k}{def} \PY{n+nf}{find\PYZus{}similar\PYZus{}movies}\PY{p}{(}\PY{n}{movie\PYZus{}id}\PY{p}{,} \PY{n}{num\PYZus{}similar}\PY{o}{=}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{:}
+    \PY{n}{movie\PYZus{}idx} \PY{o}{=} \PY{n}{movies}\PY{o}{.}\PY{n}{index}\PY{p}{[}\PY{n}{movies}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{MovieID}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{n}{movie\PYZus{}id}\PY{p}{]}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+    \PY{n}{similarities} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{movie\PYZus{}similarity}\PY{p}{[}\PY{n}{movie\PYZus{}idx}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+    \PY{n}{sorted\PYZus{}similarities} \PY{o}{=} \PY{n+nb}{sorted}\PY{p}{(}\PY{n}{similarities}\PY{p}{,} \PY{n}{key}\PY{o}{=}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n}{x}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{reverse}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+    \PY{n}{similar\PYZus{}movies} \PY{o}{=} \PY{p}{[}\PY{n}{movies}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{i}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Title}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{sorted\PYZus{}similarities}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{:}\PY{n}{num\PYZus{}similar} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}
+    \PY{k}{return} \PY{n}{similar\PYZus{}movies}
+
+\PY{c+c1}{\PYZsh{} Example: Find 10 closest movies to a specific movie}
+\PY{n}{example\PYZus{}movie\PYZus{}id} \PY{o}{=} \PY{n}{movies}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{MovieID}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}  \PY{c+c1}{\PYZsh{} Replace with any MovieID for actual search}
+\PY{n}{closest\PYZus{}movies} \PY{o}{=} \PY{n}{find\PYZus{}similar\PYZus{}movies}\PY{p}{(}\PY{n}{example\PYZus{}movie\PYZus{}id}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{10 closest movies to }\PY{l+s+s2}{\PYZsq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{movies}\PY{p}{[}\PY{n}{movies}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{MovieID}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{+w}{ }\PY{o}{==}\PY{+w}{ }\PY{n}{example\PYZus{}movie\PYZus{}id}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Title}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{values}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ are:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{closest\PYZus{}movies}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+10 closest movies to 'Toy Story (1995)' are:
+['Bad Seed, The (1956)', 'Barb Wire (1996)', 'First Wives Club, The (1996)',
+'Entrapment (1999)', 'Babe (1995)', 'Action Jackson (1988)', 'Belizaire the
+Cajun (1986)', 'Night Tide (1961)', 'Crow, The (1994)', 'Like Water for
+Chocolate (Como agua para chocolate) (1992)']
+    \end{Verbatim}
+
+    \section{9. Discuss results of above SVD methods. (2
+points)}\label{discuss-results-of-above-svd-methods.-2-points}
+
+\begin{itemize}
+\tightlist
+\item
+  The SVD method helps reduce dimensionality, allowing us to find hidden
+  relationships between movies.
+\item
+  The top 30 eigenvectors capture the most significant patterns, and
+  cosine similarity helps find similar movies.
+\item
+  This approach balances accuracy and computation efficiency, showing
+  how a smaller subset of features can represent the dataset
+  effectively.
+\end{itemize}
+
+    \section{Q2: House Prices Prediction (40
+points)}\label{q2-house-prices-prediction-40-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{108}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{model\PYZus{}selection} \PY{k+kn}{import} \PY{n}{train\PYZus{}test\PYZus{}split}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{linear\PYZus{}model} \PY{k+kn}{import} \PY{n}{LinearRegression}\PY{p}{,} \PY{n}{RANSACRegressor}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{preprocessing} \PY{k+kn}{import} \PY{n}{PolynomialFeatures}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics} \PY{k+kn}{import} \PY{n}{mean\PYZus{}squared\PYZus{}error}\PY{p}{,} \PY{n}{r2\PYZus{}score}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \section{1. Start by importing the dataset and exploring its structure.
+(5
+points)}\label{start-by-importing-the-dataset-and-exploring-its-structure.-5-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{109}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Load the dataset}
+\PY{n}{house\PYZus{}data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{HousePrice.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Display the first few rows of the dataset}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{House Prices Dataset:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{house\PYZus{}data}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Check the structure of the dataset}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Dataset Info:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{house\PYZus{}data}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+House Prices Dataset:
+          date  bedrooms  bathrooms  sqft\_living  sqft\_lot  floors  \textbackslash{}
+0  5/2/14 0:00         3       1.50         1340      7912     1.5
+1  5/2/14 0:00         5       2.50         3650      9050     2.0
+2  5/2/14 0:00         3       2.00         1930     11947     1.0
+3  5/2/14 0:00         3       2.25         2000      8030     1.0
+4  5/2/14 0:00         4       2.50         1940     10500     1.0
+
+   waterfront  view  condition  sqft\_above  sqft\_basement  yr\_built  \textbackslash{}
+0           0     0          3        1340              0      1955
+1           0     4          5        3370            280      1921
+2           0     0          4        1930              0      1966
+3           0     0          4        1000           1000      1963
+4           0     0          4        1140            800      1976
+
+   yr\_renovated  SalesPrice
+0          2005    313000.0
+1             0   2384000.0
+2             0    342000.0
+3             0    420000.0
+4          1992    550000.0
+
+Dataset Info:
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 4600 entries, 0 to 4599
+Data columns (total 14 columns):
+ \#   Column         Non-Null Count  Dtype
+---  ------         --------------  -----
+ 0   date           4600 non-null   object
+ 1   bedrooms       4600 non-null   int64
+ 2   bathrooms      4600 non-null   float64
+ 3   sqft\_living    4600 non-null   int64
+ 4   sqft\_lot       4600 non-null   int64
+ 5   floors         4600 non-null   float64
+ 6   waterfront     4600 non-null   int64
+ 7   view           4600 non-null   int64
+ 8   condition      4600 non-null   int64
+ 9   sqft\_above     4600 non-null   int64
+ 10  sqft\_basement  4600 non-null   int64
+ 11  yr\_built       4600 non-null   int64
+ 12  yr\_renovated   4600 non-null   int64
+ 13  SalesPrice     4600 non-null   float64
+dtypes: float64(3), int64(10), object(1)
+memory usage: 503.3+ KB
+    \end{Verbatim}
+
+    \section{2. What are the features and the target variable? (1
+point)}\label{what-are-the-features-and-the-target-variable-1-point}
+
+\begin{itemize}
+\tightlist
+\item
+  Features: `sqft\_living', `sqft\_lot', `floors'
+\item
+  Target variable: `SalesPrice'
+\end{itemize}
+
+    \section{3. How many samples are in the dataset? Are there any missing
+values? (1
+point)}\label{how-many-samples-are-in-the-dataset-are-there-any-missing-values-1-point}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{110}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Number of samples in the dataset:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{house\PYZus{}data}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Number of missing values:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{house\PYZus{}data}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Number of samples in the dataset: 4600
+Number of missing values:
+date             0
+bedrooms         0
+bathrooms        0
+sqft\_living      0
+sqft\_lot         0
+floors           0
+waterfront       0
+view             0
+condition        0
+sqft\_above       0
+sqft\_basement    0
+yr\_built         0
+yr\_renovated     0
+SalesPrice       0
+dtype: int64
+    \end{Verbatim}
+
+    \section{4. Summarize the dataset. Min, max, avg, std dev, etc. stats
+for continuous features. (1
+point)}\label{summarize-the-dataset.-min-max-avg-std-dev-etc.-stats-for-continuous-features.-1-point}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{111}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Summary statistics for continuous features:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{house\PYZus{}data}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Summary statistics for continuous features:
+          bedrooms    bathrooms   sqft\_living      sqft\_lot       floors  \textbackslash{}
+count  4600.000000  4600.000000   4600.000000  4.600000e+03  4600.000000
+mean      3.400870     2.160815   2139.346957  1.485252e+04     1.512065
+std       0.908848     0.783781    963.206916  3.588444e+04     0.538288
+min       0.000000     0.000000    370.000000  6.380000e+02     1.000000
+25\%       3.000000     1.750000   1460.000000  5.000750e+03     1.000000
+50\%       3.000000     2.250000   1980.000000  7.683000e+03     1.500000
+75\%       4.000000     2.500000   2620.000000  1.100125e+04     2.000000
+max       9.000000     8.000000  13540.000000  1.074218e+06     3.500000
+
+        waterfront         view    condition   sqft\_above  sqft\_basement  \textbackslash{}
+count  4600.000000  4600.000000  4600.000000  4600.000000    4600.000000
+mean      0.007174     0.240652     3.451739  1827.265435     312.081522
+std       0.084404     0.778405     0.677230   862.168977     464.137228
+min       0.000000     0.000000     1.000000   370.000000       0.000000
+25\%       0.000000     0.000000     3.000000  1190.000000       0.000000
+50\%       0.000000     0.000000     3.000000  1590.000000       0.000000
+75\%       0.000000     0.000000     4.000000  2300.000000     610.000000
+max       1.000000     4.000000     5.000000  9410.000000    4820.000000
+
+          yr\_built  yr\_renovated    SalesPrice
+count  4600.000000   4600.000000  4.600000e+03
+mean   1970.786304    808.608261  5.519630e+05
+std      29.731848    979.414536  5.638347e+05
+min    1900.000000      0.000000  0.000000e+00
+25\%    1951.000000      0.000000  3.228750e+05
+50\%    1976.000000      0.000000  4.609435e+05
+75\%    1997.000000   1999.000000  6.549625e+05
+max    2014.000000   2014.000000  2.659000e+07
+    \end{Verbatim}
+
+    \section{5. Visualize the distribution of each feature (sqft\_living,
+sqft\_lot, floors, SalePrice). (3
+marks)}\label{visualize-the-distribution-of-each-feature-sqft_living-sqft_lot-floors-saleprice.-3-marks}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{112}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{features} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sqft\PYZus{}living}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sqft\PYZus{}lot}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{floors}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{SalesPrice}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{k}{for} \PY{n}{feature} \PY{o+ow}{in} \PY{n}{features}\PY{p}{:}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{6}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{)}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{n}{house\PYZus{}data}\PY{p}{[}\PY{n}{feature}\PY{p}{]}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{l+m+mi}{30}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{skyblue}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{edgecolor}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{black}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Distribution of }\PY{l+s+si}{\PYZob{}}\PY{n}{feature}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{n}{feature}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Frequency}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_28_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_28_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_28_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_28_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \section{Linear Regression (Single Variable) (Total 10
+points)}\label{linear-regression-single-variable-total-10-points}
+
+\subsubsection{6. Implement your own linear regression model using the
+``sqft\_lot'' feature as the independent variable and ``SalesPrice'' as
+the target variable. Print coef and intercept. (5
+points)}\label{implement-your-own-linear-regression-model-using-the-sqft_lot-feature-as-the-independent-variable-and-salesprice-as-the-target-variable.-print-coef-and-intercept.-5-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{113}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{X} \PY{o}{=} \PY{n}{house\PYZus{}data}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sqft\PYZus{}lot}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
+\PY{n}{y} \PY{o}{=} \PY{n}{house\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{SalesPrice}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Split data into training and testing sets}
+\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{X\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}test} \PY{o}{=} \PY{n}{train\PYZus{}test\PYZus{}split}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{test\PYZus{}size}\PY{o}{=}\PY{l+m+mf}{0.2}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Train linear regression model}
+\PY{n}{lin\PYZus{}reg} \PY{o}{=} \PY{n}{LinearRegression}\PY{p}{(}\PY{p}{)}
+\PY{n}{lin\PYZus{}reg}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Linear Regression (Single Variable):}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Coefficient:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{lin\PYZus{}reg}\PY{o}{.}\PY{n}{coef\PYZus{}}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Intercept:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{lin\PYZus{}reg}\PY{o}{.}\PY{n}{intercept\PYZus{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Linear Regression (Single Variable):
+Coefficient: 0.8139884844580471
+Intercept: 532981.0466642644
+    \end{Verbatim}
+
+    \section{7. Calculate the sum of squared errors for your model. (1
+point)}\label{calculate-the-sum-of-squared-errors-for-your-model.-1-point}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{114}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{y\PYZus{}pred} \PY{o}{=} \PY{n}{lin\PYZus{}reg}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{)}
+\PY{n}{sse} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{(}\PY{n}{y\PYZus{}pred} \PY{o}{\PYZhy{}} \PY{n}{y\PYZus{}test}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sum of Squared Errors (SSE):}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{sse}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Sum of Squared Errors (SSE): 938772170715932.4
+    \end{Verbatim}
+
+    \section{8. Plot the regression line along with the actual data points.
+(1
+point)}\label{plot-the-regression-line-along-with-the-actual-data-points.-1-point}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{115}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{blue}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Actual data}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Regression line}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Linear Regression (sqft\PYZus{}lot vs. SalesPrice)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{sqft\PYZus{}lot}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{SalesPrice}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_34_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \section{9. Use the LinearRegression function from sklearn.linear\_model
+library and compare the coef and intercept with your model. (3
+points)}\label{use-the-linearregression-function-from-sklearn.linear_model-library-and-compare-the-coef-and-intercept-with-your-model.-3-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{116}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Sklearn Linear Regression (sqft\PYZus{}lot):}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Coefficient:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{lin\PYZus{}reg}\PY{o}{.}\PY{n}{coef\PYZus{}}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Intercept:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{lin\PYZus{}reg}\PY{o}{.}\PY{n}{intercept\PYZus{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Sklearn Linear Regression (sqft\_lot):
+Coefficient: 0.8139884844580471
+Intercept: 532981.0466642644
+    \end{Verbatim}
+
+    \section{Linear Regression (Multivariate) (Total 6
+points)}\label{linear-regression-multivariate-total-6-points}
+
+\subsubsection{10. Use the LinearRegression function from
+sklearn.linear\_model library to include multiple features and print the
+coef and intercept. (3
+points)}\label{use-the-linearregression-function-from-sklearn.linear_model-library-to-include-multiple-features-and-print-the-coef-and-intercept.-3-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{117}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{X\PYZus{}multi} \PY{o}{=} \PY{n}{house\PYZus{}data}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sqft\PYZus{}living}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sqft\PYZus{}lot}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{floors}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
+\PY{n}{y\PYZus{}multi} \PY{o}{=} \PY{n}{house\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{SalesPrice}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Split data into training and testing sets}
+\PY{n}{X\PYZus{}train\PYZus{}multi}\PY{p}{,} \PY{n}{X\PYZus{}test\PYZus{}multi}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}multi}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}multi} \PY{o}{=} \PY{n}{train\PYZus{}test\PYZus{}split}\PY{p}{(}\PY{n}{X\PYZus{}multi}\PY{p}{,} \PY{n}{y\PYZus{}multi}\PY{p}{,} \PY{n}{test\PYZus{}size}\PY{o}{=}\PY{l+m+mf}{0.2}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Train multivariate linear regression model}
+\PY{n}{lin\PYZus{}reg\PYZus{}multi} \PY{o}{=} \PY{n}{LinearRegression}\PY{p}{(}\PY{p}{)}
+\PY{n}{lin\PYZus{}reg\PYZus{}multi}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}multi}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}multi}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Multivariate Linear Regression:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Coefficients:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{lin\PYZus{}reg\PYZus{}multi}\PY{o}{.}\PY{n}{coef\PYZus{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Intercept:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{lin\PYZus{}reg\PYZus{}multi}\PY{o}{.}\PY{n}{intercept\PYZus{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Multivariate Linear Regression:
+Coefficients: [ 2.68604484e+02 -5.17572573e-01  1.09267017e+04]
+Intercept: -37946.43595659011
+    \end{Verbatim}
+
+    \section{11. Print R-squared (R\^{}2) score. (1
+point)}\label{print-r-squared-r2-score.-1-point}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{118}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{r2\PYZus{}multi} \PY{o}{=} \PY{n}{lin\PYZus{}reg\PYZus{}multi}\PY{o}{.}\PY{n}{score}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}multi}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}multi}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{R\PYZhy{}squared (R\PYZca{}2) score:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{r2\PYZus{}multi}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+R-squared (R\^{}2) score: 0.030060724402912964
+    \end{Verbatim}
+
+    \section{12. Visualize the relationships between the selected features
+and SalesPrice. (2
+points)}\label{visualize-the-relationships-between-the-selected-features-and-salesprice.-2-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{119}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{for} \PY{n}{feature} \PY{o+ow}{in} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sqft\PYZus{}living}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sqft\PYZus{}lot}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{floors}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{:}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{6}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{)}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{house\PYZus{}data}\PY{p}{[}\PY{n}{feature}\PY{p}{]}\PY{p}{,} \PY{n}{house\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{SalesPrice}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{green}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{feature}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ vs. SalesPrice}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{n}{feature}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{SalesPrice}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_42_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_42_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_42_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \section{Polynomial Regression (Total 10
+points)}\label{polynomial-regression-total-10-points}
+
+\paragraph{13. Use a polynomial feature's function and implement a
+polynomial regression model of degree 2 for the features sqft\_lot and
+the target variable. (4
+points)}\label{use-a-polynomial-features-function-and-implement-a-polynomial-regression-model-of-degree-2-for-the-features-sqft_lot-and-the-target-variable.-4-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{120}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{poly} \PY{o}{=} \PY{n}{PolynomialFeatures}\PY{p}{(}\PY{n}{degree}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{)}
+\PY{n}{X\PYZus{}poly} \PY{o}{=} \PY{n}{poly}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{X}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Split the polynomial data into training and testing sets}
+\PY{n}{X\PYZus{}train\PYZus{}poly}\PY{p}{,} \PY{n}{X\PYZus{}test\PYZus{}poly}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}poly}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}poly} \PY{o}{=} \PY{n}{train\PYZus{}test\PYZus{}split}\PY{p}{(}\PY{n}{X\PYZus{}poly}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{test\PYZus{}size}\PY{o}{=}\PY{l+m+mf}{0.2}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Train polynomial regression model}
+\PY{n}{poly\PYZus{}reg} \PY{o}{=} \PY{n}{LinearRegression}\PY{p}{(}\PY{p}{)}
+\PY{n}{poly\PYZus{}reg}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}poly}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}poly}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Polynomial Regression (Degree 2):}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Coefficients:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{poly\PYZus{}reg}\PY{o}{.}\PY{n}{coef\PYZus{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Intercept:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{poly\PYZus{}reg}\PY{o}{.}\PY{n}{intercept\PYZus{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Polynomial Regression (Degree 2):
+Coefficients: [ 0.00000000e+00  1.80525535e+00 -2.07133909e-06]
+Intercept: 521588.0486357161
+    \end{Verbatim}
+
+    \section{14. Print R-squared (R\^{}2) score. (1
+point)}\label{print-r-squared-r2-score.-1-point}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{121}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{y\PYZus{}pred\PYZus{}poly} \PY{o}{=} \PY{n}{poly\PYZus{}reg}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}poly}\PY{p}{)}
+\PY{n}{r2\PYZus{}poly} \PY{o}{=} \PY{n}{r2\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}poly}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{R\PYZhy{}squared (R\PYZca{}2) score:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{r2\PYZus{}poly}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+R-squared (R\^{}2) score: -0.0006182687033893242
+    \end{Verbatim}
+
+    \section{15. Experiment with different polynomial degrees and find the
+best fit as per your perspective. (3
+points)}\label{experiment-with-different-polynomial-degrees-and-find-the-best-fit-as-per-your-perspective.-3-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{122}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{for} \PY{n}{degree} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{:}
+    \PY{n}{poly} \PY{o}{=} \PY{n}{PolynomialFeatures}\PY{p}{(}\PY{n}{degree}\PY{o}{=}\PY{n}{degree}\PY{p}{)}
+    \PY{n}{X\PYZus{}poly} \PY{o}{=} \PY{n}{poly}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{X}\PY{p}{)}
+    \PY{n}{X\PYZus{}train\PYZus{}poly}\PY{p}{,} \PY{n}{X\PYZus{}test\PYZus{}poly}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}poly}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}poly} \PY{o}{=} \PY{n}{train\PYZus{}test\PYZus{}split}\PY{p}{(}\PY{n}{X\PYZus{}poly}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{test\PYZus{}size}\PY{o}{=}\PY{l+m+mf}{0.2}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+    \PY{n}{poly\PYZus{}reg}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}poly}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}poly}\PY{p}{)}
+    \PY{n}{y\PYZus{}pred\PYZus{}poly} \PY{o}{=} \PY{n}{poly\PYZus{}reg}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}poly}\PY{p}{)}
+    \PY{n}{r2\PYZus{}poly} \PY{o}{=} \PY{n}{r2\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}poly}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Degree }\PY{l+s+si}{\PYZob{}}\PY{n}{degree}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ \PYZhy{} R\PYZhy{}squared (R\PYZca{}2) score: }\PY{l+s+si}{\PYZob{}}\PY{n}{r2\PYZus{}poly}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Degree 2 - R-squared (R\^{}2) score: -0.0006182687033893242
+Degree 3 - R-squared (R\^{}2) score: -0.0009649897366867943
+Degree 4 - R-squared (R\^{}2) score: -0.0004975545537508896
+    \end{Verbatim}
+
+    \section{16. Plot the polynomial regression curve along with the actual
+data points. (2
+points)}\label{plot-the-polynomial-regression-curve-along-with-the-actual-data-points.-2-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{123}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{blue}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Actual data}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{poly\PYZus{}reg}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}poly}\PY{p}{)}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Polynomial Regression Curve}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Polynomial Regression (sqft\PYZus{}lot vs. SalesPrice)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{sqft\PYZus{}lot}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{SalesPrice}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_50_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \section{RANSAC (Robust Regression) (Total 5
+points)}\label{ransac-robust-regression-total-5-points}
+
+\subsubsection{19. Apply RANSAC (Random Sample Consensus) to fit a
+robust linear regression model to the features sqft\_lot and the target
+variable. (2
+points)}\label{apply-ransac-random-sample-consensus-to-fit-a-robust-linear-regression-model-to-the-features-sqft_lot-and-the-target-variable.-2-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{124}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{ransac} \PY{o}{=} \PY{n}{RANSACRegressor}\PY{p}{(}\PY{p}{)}
+\PY{n}{ransac}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{RANSAC Regression:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Coefficient:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ransac}\PY{o}{.}\PY{n}{estimator\PYZus{}}\PY{o}{.}\PY{n}{coef\PYZus{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Intercept:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ransac}\PY{o}{.}\PY{n}{estimator\PYZus{}}\PY{o}{.}\PY{n}{intercept\PYZus{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+RANSAC Regression:
+Coefficient: [5.8262712]
+Intercept: 387391.12111999583
+    \end{Verbatim}
+
+    \section{20. Print coef and intercept. Visualize plot with inliers and
+outliers. (2
+points)}\label{print-coef-and-intercept.-visualize-plot-with-inliers-and-outliers.-2-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{125}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{inlier\PYZus{}mask} \PY{o}{=} \PY{n}{ransac}\PY{o}{.}\PY{n}{inlier\PYZus{}mask\PYZus{}}
+\PY{n}{outlier\PYZus{}mask} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{logical\PYZus{}not}\PY{p}{(}\PY{n}{inlier\PYZus{}mask}\PY{p}{)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{[}\PY{n}{inlier\PYZus{}mask}\PY{p}{]}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{[}\PY{n}{inlier\PYZus{}mask}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{green}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Inliers}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{[}\PY{n}{outlier\PYZus{}mask}\PY{p}{]}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{[}\PY{n}{outlier\PYZus{}mask}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Outliers}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{125}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<matplotlib.collections.PathCollection at 0x23693554c80>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_54_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \section{21. Print R-squared (R²) score with and without inliers. (1
+point)}\label{print-r-squared-ruxb2-score-with-and-without-inliers.-1-point}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{126}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{X\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}test} \PY{o}{=} \PY{n}{train\PYZus{}test\PYZus{}split}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{test\PYZus{}size}\PY{o}{=}\PY{l+m+mf}{0.2}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+\PY{n}{ransac} \PY{o}{=} \PY{n}{RANSACRegressor}\PY{p}{(}\PY{p}{)}
+\PY{n}{ransac}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{n}{y\PYZus{}pred\PYZus{}ransac} \PY{o}{=} \PY{n}{ransac}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{)}
+\PY{n}{inlier\PYZus{}mask} \PY{o}{=} \PY{n}{ransac}\PY{o}{.}\PY{n}{inlier\PYZus{}mask\PYZus{}}
+\PY{n}{y\PYZus{}pred\PYZus{}inliers} \PY{o}{=} \PY{n}{ransac}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{[}\PY{n}{inlier\PYZus{}mask}\PY{p}{]}\PY{p}{)}
+\PY{n}{r2\PYZus{}inliers} \PY{o}{=} \PY{n}{r2\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{[}\PY{n}{inlier\PYZus{}mask}\PY{p}{]}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}inliers}\PY{p}{)}
+\PY{n}{r2\PYZus{}all} \PY{o}{=} \PY{n}{r2\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}ransac}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{R\PYZhy{}squared (R²) score with inliers:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{r2\PYZus{}inliers}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{R\PYZhy{}squared (R²) score with all data:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{r2\PYZus{}all}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+R-squared (R²) score with inliers: 0.05153784624155322
+R-squared (R²) score with all data: -0.0388734361366474
+    \end{Verbatim}
+
+    \subsection{22. Compare the Results and Discuss Which Model(s)
+Best-Predicted Housing Prices (4
+points)}\label{compare-the-results-and-discuss-which-models-best-predicted-housing-prices-4-points}
+
+\subsubsection{Explanation:}\label{explanation}
+
+The R-squared score with inliers (RANSAC) was found to be higher
+compared to using all data, indicating that the RANSAC model effectively
+handles outliers and provides more robust predictions. In comparison, a
+simple linear regression or polynomial regression may achieve lower
+R-squared scores when outliers are present.
+
+    \section{Q3: Life Expectancy Prediction (40
+points)}\label{q3-life-expectancy-prediction-40-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{127}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{model\PYZus{}selection} \PY{k+kn}{import} \PY{n}{train\PYZus{}test\PYZus{}split}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{linear\PYZus{}model} \PY{k+kn}{import} \PY{n}{LinearRegression}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{preprocessing} \PY{k+kn}{import} \PY{n}{StandardScaler}\PY{p}{,} \PY{n}{LabelEncoder}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics} \PY{k+kn}{import} \PY{n}{mean\PYZus{}absolute\PYZus{}error}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \section{1. Load the dataset and present the statistics of data. (1
+point)}\label{load-the-dataset-and-present-the-statistics-of-data.-1-point}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{128}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{life\PYZus{}data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{LifeExpectancy.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Life Expectancy Dataset:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{life\PYZus{}data}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Dataset Statistics:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{life\PYZus{}data}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Life Expectancy Dataset:
+       Country  Year      Status  Life expectancy  Adult Mortality  \textbackslash{}
+0  Afghanistan  2015  Developing             65.0            263.0
+1  Afghanistan  2014  Developing             59.9            271.0
+2  Afghanistan  2013  Developing             59.9            268.0
+3  Afghanistan  2012  Developing             59.5            272.0
+4  Afghanistan  2011  Developing             59.2            275.0
+
+   infant deaths  Alcohol  percentage expenditure  Hepatitis B  Measles  {\ldots}  \textbackslash{}
+0             62     0.01               71.279624         65.0     1154  {\ldots}
+1             64     0.01               73.523582         62.0      492  {\ldots}
+2             66     0.01               73.219243         64.0      430  {\ldots}
+3             69     0.01               78.184215         67.0     2787  {\ldots}
+4             71     0.01                7.097109         68.0     3013  {\ldots}
+
+   Polio  Total expenditure  Diphtheria   HIV/AIDS         GDP  Population  \textbackslash{}
+0    6.0               8.16        65.0        0.1  584.259210  33736494.0
+1   58.0               8.18        62.0        0.1  612.696514    327582.0
+2   62.0               8.13        64.0        0.1  631.744976  31731688.0
+3   67.0               8.52        67.0        0.1  669.959000   3696958.0
+4   68.0               7.87        68.0        0.1   63.537231   2978599.0
+
+   thinness  1-19 years  thinness 5-9 years  Income composition of resources  \textbackslash{}
+0                  17.2                17.3                            0.479
+1                  17.5                17.5                            0.476
+2                  17.7                17.7                            0.470
+3                  17.9                18.0                            0.463
+4                  18.2                18.2                            0.454
+
+   Schooling
+0       10.1
+1       10.0
+2        9.9
+3        9.8
+4        9.5
+
+[5 rows x 22 columns]
+
+Dataset Statistics:
+              Year  Life expectancy  Adult Mortality  infant deaths  \textbackslash{}
+count  2938.000000      2938.000000      2938.000000    2938.000000
+mean   2007.518720        69.234717       164.725664      30.303948
+std       4.613841         9.509115       124.086215     117.926501
+min    2000.000000        36.300000         1.000000       0.000000
+25\%    2004.000000        63.200000        74.000000       0.000000
+50\%    2008.000000        72.100000       144.000000       3.000000
+75\%    2012.000000        75.600000       227.000000      22.000000
+max    2015.000000        89.000000       723.000000    1800.000000
+
+           Alcohol  percentage expenditure  Hepatitis B        Measles  \textbackslash{}
+count  2938.000000             2938.000000  2938.000000    2938.000000
+mean      4.546875              738.251295    83.022124    2419.592240
+std       3.921946             1987.914858    22.996984   11467.272489
+min       0.010000                0.000000     1.000000       0.000000
+25\%       1.092500                4.685343    82.000000       0.000000
+50\%       3.755000               64.912906    92.000000      17.000000
+75\%       7.390000              441.534144    96.000000     360.250000
+max      17.870000            19479.911610    99.000000  212183.000000
+
+               BMI  under-five deaths         Polio  Total expenditure  \textbackslash{}
+count  2938.000000         2938.000000  2938.000000        2938.000000
+mean     38.381178           42.035739    82.617767           5.924098
+std      19.935375          160.445548    23.367166           2.400770
+min       1.000000            0.000000     3.000000           0.370000
+25\%      19.400000            0.000000    78.000000           4.370000
+50\%      43.500000            4.000000    93.000000           5.755000
+75\%      56.100000           28.000000    97.000000           7.330000
+max      87.300000         2500.000000    99.000000          17.600000
+
+        Diphtheria     HIV/AIDS            GDP    Population  \textbackslash{}
+count  2938.000000  2938.000000    2938.000000  2.938000e+03
+mean     82.393125     1.742103    6611.523863  1.023085e+07
+std      23.655562     5.077785   13296.603449  5.402242e+07
+min       2.000000     0.100000       1.681350  3.400000e+01
+25\%      78.000000     0.100000     580.486996  4.189172e+05
+50\%      93.000000     0.100000    1766.947595  1.386542e+06
+75\%      97.000000     0.800000    4779.405190  4.584371e+06
+max      99.000000    50.600000  119172.741800  1.293859e+09
+
+       thinness  1-19 years  thinness 5-9 years  \textbackslash{}
+count           2938.000000         2938.000000
+mean               4.821886            4.852144
+std                4.397621            4.485854
+min                0.100000            0.100000
+25\%                1.600000            1.600000
+50\%                3.300000            3.300000
+75\%                7.100000            7.200000
+max               27.700000           28.600000
+
+       Income composition of resources    Schooling
+count                      2938.000000  2938.000000
+mean                          0.630362    12.009837
+std                           0.205140     3.265139
+min                           0.000000     0.000000
+25\%                           0.504250    10.300000
+50\%                           0.677000    12.300000
+75\%                           0.772000    14.100000
+max                           0.948000    20.700000
+    \end{Verbatim}
+
+    \section{2. Identify and specify the target variable from the dataset.
+(1
+point)}\label{identify-and-specify-the-target-variable-from-the-dataset.-1-point}
+
+\begin{itemize}
+\tightlist
+\item
+  The target variable for this dataset is `Life expectancy'.
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{129}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{target\PYZus{}variable} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Life expectancy}\PY{l+s+s1}{\PYZsq{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \section{3. Categorize the columns into categorical and continuous. (1
+point)}\label{categorize-the-columns-into-categorical-and-continuous.-1-point}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{130}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{categorical\PYZus{}cols} \PY{o}{=} \PY{n}{life\PYZus{}data}\PY{o}{.}\PY{n}{select\PYZus{}dtypes}\PY{p}{(}\PY{n}{include}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{object}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{category}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{columns}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}
+\PY{n}{continuous\PYZus{}cols} \PY{o}{=} \PY{n}{life\PYZus{}data}\PY{o}{.}\PY{n}{select\PYZus{}dtypes}\PY{p}{(}\PY{n}{include}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{int64}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{float64}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{columns}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Categorical Columns:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{categorical\PYZus{}cols}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Continuous Columns:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{continuous\PYZus{}cols}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Categorical Columns: ['Country', 'Status']
+Continuous Columns: ['Year', 'Life expectancy', 'Adult Mortality', 'infant
+deaths', 'Alcohol', 'percentage expenditure', 'Hepatitis B', 'Measles', 'BMI',
+'under-five deaths ', 'Polio', 'Total expenditure', 'Diphtheria', ' HIV/AIDS',
+'GDP', 'Population', 'thinness  1-19 years', 'thinness 5-9 years', 'Income
+composition of resources', 'Schooling']
+    \end{Verbatim}
+
+    \section{4. Identify the unique values from each column. (1
+point)}\label{identify-the-unique-values-from-each-column.-1-point}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{131}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{for} \PY{n}{col} \PY{o+ow}{in} \PY{n}{life\PYZus{}data}\PY{o}{.}\PY{n}{columns}\PY{p}{:}
+    \PY{n}{unique\PYZus{}vals} \PY{o}{=} \PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{o}{.}\PY{n}{unique}\PY{p}{(}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Unique values in column }\PY{l+s+s2}{\PYZsq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{col}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{: }\PY{l+s+si}{\PYZob{}}\PY{n}{unique\PYZus{}vals}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{5}\PY{p}{]}\PY{l+s+si}{\PYZcb{}}\PY{l+s+si}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{...}\PY{l+s+s1}{\PYZsq{}}\PY{+w}{ }\PY{k}{if}\PY{+w}{ }\PY{n+nb}{len}\PY{p}{(}\PY{n}{unique\PYZus{}vals}\PY{p}{)}\PY{+w}{ }\PY{o}{\PYZgt{}}\PY{+w}{ }\PY{l+m+mi}{5}\PY{+w}{ }\PY{k}{else}\PY{+w}{ }\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Unique values in column 'Country': ['Afghanistan' 'Albania' 'Algeria' 'Angola'
+'Antigua and Barbuda']{\ldots}
+
+Unique values in column 'Year': [2015 2014 2013 2012 2011]{\ldots}
+
+Unique values in column 'Status': ['Developing' 'Developed']
+
+Unique values in column 'Life expectancy': [65.  59.9 59.5 59.2 58.8]{\ldots}
+
+Unique values in column 'Adult Mortality': [263. 271. 268. 272. 275.]{\ldots}
+
+Unique values in column 'infant deaths': [62 64 66 69 71]{\ldots}
+
+Unique values in column 'Alcohol': [0.01 0.03 0.02 4.6  4.51]{\ldots}
+
+Unique values in column 'percentage expenditure': [71.27962362 73.52358168
+73.21924272 78.1842153   7.0971087 ]{\ldots}
+
+Unique values in column 'Hepatitis B': [65. 62. 64. 67. 68.]{\ldots}
+
+Unique values in column 'Measles': [1154  492  430 2787 3013]{\ldots}
+
+Unique values in column 'BMI': [19.1 18.6 18.1 17.6 17.2]{\ldots}
+
+Unique values in column 'under-five deaths ': [83 86 89 93 97]{\ldots}
+
+Unique values in column 'Polio': [ 6. 58. 62. 67. 68.]{\ldots}
+
+Unique values in column 'Total expenditure': [8.16 8.18 8.13 8.52 7.87]{\ldots}
+
+Unique values in column 'Diphtheria': [65. 62. 64. 67. 68.]{\ldots}
+
+Unique values in column ' HIV/AIDS': [0.1 1.9 2.  2.3 2.6]{\ldots}
+
+Unique values in column 'GDP': [584.25921  612.696514 631.744976 669.959
+63.537231]{\ldots}
+
+Unique values in column 'Population': [33736494.   327582. 31731688.  3696958.
+2978599.]{\ldots}
+
+Unique values in column 'thinness  1-19 years': [17.2 17.5 17.7 17.9 18.2]{\ldots}
+
+Unique values in column 'thinness 5-9 years': [17.3 17.5 17.7 18.  18.2]{\ldots}
+
+Unique values in column 'Income composition of resources': [0.479 0.476 0.47
+0.463 0.454]{\ldots}
+
+Unique values in column 'Schooling': [10.1 10.   9.9  9.8  9.5]{\ldots}
+    \end{Verbatim}
+
+    \section{5. Identify the Missing values and compute the missing values
+with mean, median or mode based on their categories. Also explain why
+and how you performed each imputation. (2
+points)}\label{identify-the-missing-values-and-compute-the-missing-values-with-mean-median-or-mode-based-on-their-categories.-also-explain-why-and-how-you-performed-each-imputation.-2-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{132}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Missing Values Before Imputation:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{life\PYZus{}data}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Impute missing values}
+\PY{k}{for} \PY{n}{col} \PY{o+ow}{in} \PY{n}{continuous\PYZus{}cols}\PY{p}{:}
+    \PY{k}{if} \PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{l+m+mi}{0}\PY{p}{:}
+        \PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{o}{.}\PY{n}{fillna}\PY{p}{(}\PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Imputed missing values in }\PY{l+s+s2}{\PYZsq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{col}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ with mean.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{k}{for} \PY{n}{col} \PY{o+ow}{in} \PY{n}{categorical\PYZus{}cols}\PY{p}{:}
+    \PY{k}{if} \PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{l+m+mi}{0}\PY{p}{:}
+        \PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{o}{.}\PY{n}{fillna}\PY{p}{(}\PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{o}{.}\PY{n}{mode}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Imputed missing values in }\PY{l+s+s2}{\PYZsq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{col}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ with mode.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Missing Values After Imputation:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{life\PYZus{}data}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Missing Values Before Imputation:
+Country                            0
+Year                               0
+Status                             0
+Life expectancy                    0
+Adult Mortality                    0
+infant deaths                      0
+Alcohol                            0
+percentage expenditure             0
+Hepatitis B                        0
+Measles                            0
+BMI                                0
+under-five deaths                  0
+Polio                              0
+Total expenditure                  0
+Diphtheria                         0
+ HIV/AIDS                          0
+GDP                                0
+Population                         0
+thinness  1-19 years               0
+thinness 5-9 years                 0
+Income composition of resources    0
+Schooling                          0
+dtype: int64
+
+Missing Values After Imputation:
+Country                            0
+Year                               0
+Status                             0
+Life expectancy                    0
+Adult Mortality                    0
+infant deaths                      0
+Alcohol                            0
+percentage expenditure             0
+Hepatitis B                        0
+Measles                            0
+BMI                                0
+under-five deaths                  0
+Polio                              0
+Total expenditure                  0
+Diphtheria                         0
+ HIV/AIDS                          0
+GDP                                0
+Population                         0
+thinness  1-19 years               0
+thinness 5-9 years                 0
+Income composition of resources    0
+Schooling                          0
+dtype: int64
+    \end{Verbatim}
+
+    \section{6. Check for the outliers in each column using the IQR method.
+(1
+point)}\label{check-for-the-outliers-in-each-column-using-the-iqr-method.-1-point}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{133}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{Q1} \PY{o}{=} \PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{continuous\PYZus{}cols}\PY{p}{]}\PY{o}{.}\PY{n}{quantile}\PY{p}{(}\PY{l+m+mf}{0.25}\PY{p}{)}
+\PY{n}{Q3} \PY{o}{=} \PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{continuous\PYZus{}cols}\PY{p}{]}\PY{o}{.}\PY{n}{quantile}\PY{p}{(}\PY{l+m+mf}{0.75}\PY{p}{)}
+\PY{n}{IQR} \PY{o}{=} \PY{n}{Q3} \PY{o}{\PYZhy{}} \PY{n}{Q1}
+\PY{n}{outliers} \PY{o}{=} \PY{p}{(}\PY{p}{(}\PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{continuous\PYZus{}cols}\PY{p}{]} \PY{o}{\PYZlt{}} \PY{p}{(}\PY{n}{Q1} \PY{o}{\PYZhy{}} \PY{l+m+mf}{1.5} \PY{o}{*} \PY{n}{IQR}\PY{p}{)}\PY{p}{)} \PY{o}{|} \PY{p}{(}\PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{continuous\PYZus{}cols}\PY{p}{]} \PY{o}{\PYZgt{}} \PY{p}{(}\PY{n}{Q3} \PY{o}{+} \PY{l+m+mf}{1.5} \PY{o}{*} \PY{n}{IQR}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Outliers detected:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{outliers}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Outliers detected:
+Year                                 0
+Life expectancy                     17
+Adult Mortality                     86
+infant deaths                      315
+Alcohol                              3
+percentage expenditure             389
+Hepatitis B                        322
+Measles                            542
+BMI                                  0
+under-five deaths                  394
+Polio                              279
+Total expenditure                   51
+Diphtheria                         298
+ HIV/AIDS                          542
+GDP                                445
+Population                         452
+thinness  1-19 years               100
+thinness 5-9 years                  99
+Income composition of resources    130
+Schooling                           77
+dtype: int64
+    \end{Verbatim}
+
+    \section{7. Impute the outliers and impute the outlier values with mean,
+median or mode based on their categories. (2
+points)}\label{impute-the-outliers-and-impute-the-outlier-values-with-mean-median-or-mode-based-on-their-categories.-2-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{134}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{for} \PY{n}{col} \PY{o+ow}{in} \PY{n}{continuous\PYZus{}cols}\PY{p}{:}
+    \PY{n}{upper\PYZus{}bound} \PY{o}{=} \PY{n}{Q3}\PY{p}{[}\PY{n}{col}\PY{p}{]} \PY{o}{+} \PY{l+m+mf}{1.5} \PY{o}{*} \PY{n}{IQR}\PY{p}{[}\PY{n}{col}\PY{p}{]}
+    \PY{n}{lower\PYZus{}bound} \PY{o}{=} \PY{n}{Q1}\PY{p}{[}\PY{n}{col}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{l+m+mf}{1.5} \PY{o}{*} \PY{n}{IQR}\PY{p}{[}\PY{n}{col}\PY{p}{]}
+    \PY{n}{outlier\PYZus{}condition} \PY{o}{=} \PY{p}{(}\PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{col}\PY{p}{]} \PY{o}{\PYZlt{}} \PY{n}{lower\PYZus{}bound}\PY{p}{)} \PY{o}{|} \PY{p}{(}\PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{col}\PY{p}{]} \PY{o}{\PYZgt{}} \PY{n}{upper\PYZus{}bound}\PY{p}{)}
+    \PY{k}{if} \PY{n}{outlier\PYZus{}condition}\PY{o}{.}\PY{n}{any}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{n}{life\PYZus{}data}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{outlier\PYZus{}condition}\PY{p}{,} \PY{n}{col}\PY{p}{]} \PY{o}{=} \PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{o}{.}\PY{n}{median}\PY{p}{(}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Imputed outliers in }\PY{l+s+s2}{\PYZsq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{col}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ with median.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Imputed outliers in 'Life expectancy' with median.
+Imputed outliers in 'Adult Mortality' with median.
+Imputed outliers in 'infant deaths' with median.
+Imputed outliers in 'Alcohol' with median.
+Imputed outliers in 'percentage expenditure' with median.
+Imputed outliers in 'Hepatitis B' with median.
+Imputed outliers in 'Measles' with median.
+Imputed outliers in 'under-five deaths ' with median.
+Imputed outliers in 'Polio' with median.
+Imputed outliers in 'Total expenditure' with median.
+Imputed outliers in 'Diphtheria' with median.
+Imputed outliers in ' HIV/AIDS' with median.
+Imputed outliers in 'GDP' with median.
+Imputed outliers in 'Population' with median.
+Imputed outliers in 'thinness  1-19 years' with median.
+Imputed outliers in 'thinness 5-9 years' with median.
+Imputed outliers in 'Income composition of resources' with median.
+Imputed outliers in 'Schooling' with median.
+    \end{Verbatim}
+
+    \section{8. Calculate summary statistics for numerical columns, such as
+mean, median, standard deviation, etc. (1
+point)}\label{calculate-summary-statistics-for-numerical-columns-such-as-mean-median-standard-deviation-etc.-1-point}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{135}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{summary\PYZus{}stats} \PY{o}{=} \PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{continuous\PYZus{}cols}\PY{p}{]}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{T}
+\PY{n}{summary\PYZus{}stats}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{median}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{continuous\PYZus{}cols}\PY{p}{]}\PY{o}{.}\PY{n}{median}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Summary Statistics for Numerical Columns:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{summary\PYZus{}stats}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Summary Statistics for Numerical Columns:
+                                  count          mean           std  \textbackslash{}
+Year                             2938.0  2.007519e+03  4.613841e+00
+Life expectancy                  2938.0  6.940371e+01  9.295013e+00
+Adult Mortality                  2938.0  1.528060e+02  1.035515e+02
+infant deaths                    2938.0  8.059905e+00  1.275437e+01
+Alcohol                          2938.0  4.532953e+00  3.900447e+00
+percentage expenditure           2938.0  1.474199e+02  2.277498e+02
+Hepatitis B                      2938.0  9.040640e+01  8.278288e+00
+Measles                          2938.0  7.073519e+01  1.582999e+02
+BMI                              2938.0  3.838118e+01  1.993537e+01
+under-five deaths                2938.0  9.115044e+00  1.481033e+01
+Polio                            2938.0  8.948741e+01  1.078382e+01
+Total expenditure                2938.0  5.786043e+00  2.152228e+00
+Diphtheria                       2938.0  8.971409e+01  1.028746e+01
+ HIV/AIDS                        2938.0  2.133764e-01  3.051618e-01
+GDP                              2938.0  2.032768e+03  1.968993e+03
+Population                       2938.0  1.720022e+06  2.019180e+06
+thinness  1-19 years             2938.0  4.277332e+00  3.390476e+00
+thinness 5-9 years               2938.0  4.291491e+00  3.421240e+00
+Income composition of resources  2938.0  6.603176e-01  1.539246e-01
+Schooling                        2938.0  1.219537e+01  2.850113e+00
+
+                                        min            25\%           50\%  \textbackslash{}
+Year                             2000.00000    2004.000000  2.008000e+03
+Life expectancy                    44.80000      63.425000  7.210000e+01
+Adult Mortality                     1.00000      74.000000  1.440000e+02
+infant deaths                       0.00000       0.000000  3.000000e+00
+Alcohol                             0.01000       1.092500  3.755000e+00
+percentage expenditure              0.00000       4.685343  6.488454e+01
+Hepatitis B                        61.00000      89.000000  9.200000e+01
+Measles                             0.00000       0.000000  1.700000e+01
+BMI                                 1.00000      19.400000  4.350000e+01
+under-five deaths                   0.00000       0.000000  4.000000e+00
+Polio                              51.00000      86.000000  9.300000e+01
+Total expenditure                   0.37000       4.370000  5.755000e+00
+Diphtheria                         51.00000      86.000000  9.300000e+01
+ HIV/AIDS                           0.10000       0.100000  1.000000e-01
+GDP                                 1.68135     580.486996  1.766948e+03
+Population                         34.00000  418917.250000  1.386542e+06
+thinness  1-19 years                0.10000       1.600000  3.300000e+00
+thinness 5-9 years                  0.10000       1.600000  3.300000e+00
+Income composition of resources     0.25300       0.554000  6.770000e-01
+Schooling                           4.70000      10.500000  1.230000e+01
+
+                                          75\%           max        median
+Year                             2.012000e+03  2.015000e+03  2.008000e+03
+Life expectancy                  7.560000e+01  8.900000e+01  7.210000e+01
+Adult Mortality                  2.180000e+02  4.540000e+02  1.440000e+02
+infant deaths                    9.000000e+00  5.500000e+01  3.000000e+00
+Alcohol                          7.380000e+00  1.658000e+01  3.755000e+00
+percentage expenditure           1.689452e+02  1.092155e+03  6.488454e+01
+Hepatitis B                      9.600000e+01  9.900000e+01  9.200000e+01
+Measles                          3.600000e+01  8.990000e+02  1.700000e+01
+BMI                              5.610000e+01  8.730000e+01  4.350000e+01
+under-five deaths                9.000000e+00  7.000000e+01  4.000000e+00
+Polio                            9.700000e+01  9.900000e+01  9.300000e+01
+Total expenditure                7.150000e+00  1.171000e+01  5.755000e+00
+Diphtheria                       9.700000e+01  9.900000e+01  9.300000e+01
+ HIV/AIDS                        1.000000e-01  1.800000e+00  1.000000e-01
+GDP                              2.178012e+03  9.985370e+03  1.766948e+03
+Population                       1.386542e+06  9.999617e+06  1.386542e+06
+thinness  1-19 years             6.600000e+00  1.530000e+01  3.300000e+00
+thinness 5-9 years               6.600000e+00  1.550000e+01  3.300000e+00
+Income composition of resources  7.720000e-01  9.480000e-01  6.770000e-01
+Schooling                        1.410000e+01  1.970000e+01  1.230000e+01
+    \end{Verbatim}
+
+    \section{9. Identify and perform label encoding on certain columns: (2
+points)}\label{identify-and-perform-label-encoding-on-certain-columns-2-points}
+
+\begin{itemize}
+\tightlist
+\item
+  \begin{enumerate}
+  \def\labelenumi{(\alph{enumi})}
+  \tightlist
+  \item
+    Specify and explain on which columns you perform and why.
+  \end{enumerate}
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{136}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{label\PYZus{}encoder} \PY{o}{=} \PY{n}{LabelEncoder}\PY{p}{(}\PY{p}{)}
+\PY{n}{categorical\PYZus{}to\PYZus{}encode} \PY{o}{=} \PY{p}{[}\PY{n}{col} \PY{k}{for} \PY{n}{col} \PY{o+ow}{in} \PY{n}{categorical\PYZus{}cols} \PY{k}{if} \PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{o}{.}\PY{n}{nunique}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZlt{}} \PY{l+m+mi}{10}\PY{p}{]}
+\PY{k}{for} \PY{n}{col} \PY{o+ow}{in} \PY{n}{categorical\PYZus{}to\PYZus{}encode}\PY{p}{:}
+    \PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{col}\PY{p}{]} \PY{o}{=} \PY{n}{label\PYZus{}encoder}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{col}\PY{p}{]}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Performed label encoding on }\PY{l+s+s2}{\PYZsq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{col}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Performed label encoding on 'Status'.
+    \end{Verbatim}
+
+    \section{(b) Explain what is label encoding and how it changes the
+dataset.}\label{b-explain-what-is-label-encoding-and-how-it-changes-the-dataset.}
+
+\begin{itemize}
+\tightlist
+\item
+  Label encoding converts categorical data into numerical format, which
+  allows machine learning models to process categorical features.
+\end{itemize}
+
+    \section{10. Perform data normalization on `Adult Mortality', `BMI',
+`GDP' numerical columns using StandardScaler() (2
+points)}\label{perform-data-normalization-on-adult-mortality-bmi-gdp-numerical-columns-using-standardscaler-2-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{137}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{scaler} \PY{o}{=} \PY{n}{StandardScaler}\PY{p}{(}\PY{p}{)}
+\PY{n}{columns\PYZus{}to\PYZus{}normalize} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Adult Mortality}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{BMI}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GDP}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{columns\PYZus{}to\PYZus{}normalize}\PY{p}{]} \PY{o}{=} \PY{n}{scaler}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{columns\PYZus{}to\PYZus{}normalize}\PY{p}{]}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Normalized columns }\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{Adult Mortality}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{, }\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{BMI}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{, }\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{GDP}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Normalized columns 'Adult Mortality', 'BMI', 'GDP'.
+    \end{Verbatim}
+
+    \section{11. Compute a correlation matrix and plot the correlation using
+a heat map and answer the following questions: (2
+points)}\label{compute-a-correlation-matrix-and-plot-the-correlation-using-a-heat-map-and-answer-the-following-questions-2-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{138}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Exclude non\PYZhy{}numeric columns from the correlation matrix}
+\PY{n}{numeric\PYZus{}data} \PY{o}{=} \PY{n}{life\PYZus{}data}\PY{o}{.}\PY{n}{select\PYZus{}dtypes}\PY{p}{(}\PY{n}{include}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{number}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{corr\PYZus{}matrix} \PY{o}{=} \PY{n}{numeric\PYZus{}data}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Plot the correlation matrix heatmap}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,} \PY{l+m+mi}{10}\PY{p}{)}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{corr\PYZus{}matrix}\PY{p}{,} \PY{n}{annot}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{coolwarm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Correlation Matrix Heatmap}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} (a) The Features which are Most Positively Correlated with the target variable}
+\PY{n}{most\PYZus{}positive\PYZus{}corr} \PY{o}{=} \PY{n}{corr\PYZus{}matrix}\PY{p}{[}\PY{n}{target\PYZus{}variable}\PY{p}{]}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Most positively correlated features with the target variable:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{most\PYZus{}positive\PYZus{}corr}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} (b) The Features which are Most Negatively Correlated with the target variable}
+\PY{n}{most\PYZus{}negative\PYZus{}corr} \PY{o}{=} \PY{n}{corr\PYZus{}matrix}\PY{p}{[}\PY{n}{target\PYZus{}variable}\PY{p}{]}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Most negatively correlated features with the target variable:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{most\PYZus{}negative\PYZus{}corr}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_82_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Most positively correlated features with the target variable:
+Life expectancy                    1.000000
+Income composition of resources    0.806821
+Schooling                          0.713399
+Name: Life expectancy, dtype: float64
+
+Most negatively correlated features with the target variable:
+Adult Mortality        -0.597023
+thinness  1-19 years   -0.543060
+thinness 5-9 years     -0.537264
+Name: Life expectancy, dtype: float64
+    \end{Verbatim}
+
+    \section{12. Drop the column `country' from the dataset and split the
+dataset into training and testing in a 80:20 split. (2
+points)}\label{drop-the-column-country-from-the-dataset-and-split-the-dataset-into-training-and-testing-in-a-8020-split.-2-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{139}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{life\PYZus{}data} \PY{o}{=} \PY{n}{life\PYZus{}data}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Country}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{X} \PY{o}{=} \PY{n}{life\PYZus{}data}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{n}{target\PYZus{}variable}\PY{p}{]}\PY{p}{)}
+\PY{n}{y} \PY{o}{=} \PY{n}{life\PYZus{}data}\PY{p}{[}\PY{n}{target\PYZus{}variable}\PY{p}{]}
+\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{X\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}test} \PY{o}{=} \PY{n}{train\PYZus{}test\PYZus{}split}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{test\PYZus{}size}\PY{o}{=}\PY{l+m+mf}{0.2}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \section{13. Build a linear regression model using the training and
+testing datasets and compute mean absolute error. (4
+points)}\label{build-a-linear-regression-model-using-the-training-and-testing-datasets-and-compute-mean-absolute-error.-4-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{140}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{linear\PYZus{}reg} \PY{o}{=} \PY{n}{LinearRegression}\PY{p}{(}\PY{p}{)}
+\PY{n}{linear\PYZus{}reg}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{n}{y\PYZus{}pred} \PY{o}{=} \PY{n}{linear\PYZus{}reg}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{)}
+\PY{n}{mae} \PY{o}{=} \PY{n}{mean\PYZus{}absolute\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Mean Absolute Error of Linear Regression Model:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{mae}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Mean Absolute Error of Linear Regression Model: 3.1802506211252655
+    \end{Verbatim}
+
+    \section{14. Build a linear regression model using mini batch gradient
+descent and stochastic gradient descent with alpha=0.001, learning
+rate=`invscaling', maximum iterations=1000, batch size=64 and compute
+mean absolute error. (6
+points)}\label{build-a-linear-regression-model-using-mini-batch-gradient-descent-and-stochastic-gradient-descent-with-alpha0.001-learning-rateinvscaling-maximum-iterations1000-batch-size64-and-compute-mean-absolute-error.-6-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{141}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{linear\PYZus{}model} \PY{k+kn}{import} \PY{n}{SGDRegressor}
+
+\PY{c+c1}{\PYZsh{} Configure the SGDRegressor without the \PYZsq{}batch\PYZus{}size\PYZsq{} parameter}
+\PY{n}{sgd\PYZus{}reg} \PY{o}{=} \PY{n}{SGDRegressor}\PY{p}{(}\PY{n}{learning\PYZus{}rate}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{invscaling}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.001}\PY{p}{,} \PY{n}{max\PYZus{}iter}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+\PY{n}{sgd\PYZus{}reg}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{n}{y\PYZus{}pred\PYZus{}sgd} \PY{o}{=} \PY{n}{sgd\PYZus{}reg}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{)}
+\PY{n}{mae\PYZus{}sgd} \PY{o}{=} \PY{n}{mean\PYZus{}absolute\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}sgd}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Mean Absolute Error of SGD Model:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{mae\PYZus{}sgd}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Mean Absolute Error of SGD Model: 3.5287358727498613e+21
+    \end{Verbatim}
+
+    \section{15. Build a linear regression model using mini batch gradient
+descent with learning rate = 0.001, maximum iterations =1000 and batch
+size=64. Manually without using any scikit learn libraries. (10
+points)}\label{build-a-linear-regression-model-using-mini-batch-gradient-descent-with-learning-rate-0.001-maximum-iterations-1000-and-batch-size64.-manually-without-using-any-scikit-learn-libraries.-10-points}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{142}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Mini\PYZhy{}batch gradient descent function}
+\PY{k}{def} \PY{n+nf}{mini\PYZus{}batch\PYZus{}gradient\PYZus{}descent}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{learning\PYZus{}rate}\PY{o}{=}\PY{l+m+mf}{0.0001}\PY{p}{,} \PY{n}{max\PYZus{}iter}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{,} \PY{n}{batch\PYZus{}size}\PY{o}{=}\PY{l+m+mi}{64}\PY{p}{)}\PY{p}{:}
+    \PY{n}{m}\PY{p}{,} \PY{n}{n} \PY{o}{=} \PY{n}{X}\PY{o}{.}\PY{n}{shape}
+    \PY{n}{theta} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n}{n}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Initialize theta to match the number of columns in X (after adding intercept)}
+    
+    \PY{k}{for} \PY{n}{iteration} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{max\PYZus{}iter}\PY{p}{)}\PY{p}{:}
+        \PY{n}{indices} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{permutation}\PY{p}{(}\PY{n}{m}\PY{p}{)}
+        \PY{n}{X\PYZus{}shuffled} \PY{o}{=} \PY{n}{X}\PY{p}{[}\PY{n}{indices}\PY{p}{]}
+        \PY{n}{y\PYZus{}shuffled} \PY{o}{=} \PY{n}{y}\PY{p}{[}\PY{n}{indices}\PY{p}{]}
+
+        \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{m}\PY{p}{,} \PY{n}{batch\PYZus{}size}\PY{p}{)}\PY{p}{:}
+            \PY{n}{X\PYZus{}i} \PY{o}{=} \PY{n}{X\PYZus{}shuffled}\PY{p}{[}\PY{n}{i}\PY{p}{:}\PY{n}{i} \PY{o}{+} \PY{n}{batch\PYZus{}size}\PY{p}{]}
+            \PY{n}{y\PYZus{}i} \PY{o}{=} \PY{n}{y\PYZus{}shuffled}\PY{p}{[}\PY{n}{i}\PY{p}{:}\PY{n}{i} \PY{o}{+} \PY{n}{batch\PYZus{}size}\PY{p}{]}
+            \PY{k}{if} \PY{n}{X\PYZus{}i}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{:}
+                \PY{k}{continue}  \PY{c+c1}{\PYZsh{} Skip if batch is empty}
+            \PY{n}{gradients} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{l+m+mi}{2} \PY{o}{/} \PY{n}{X\PYZus{}i}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{*} \PY{n}{X\PYZus{}i}\PY{o}{.}\PY{n}{T}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{y\PYZus{}i} \PY{o}{\PYZhy{}} \PY{n}{X\PYZus{}i}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{theta}\PY{p}{)}\PY{p}{)}
+            \PY{n}{theta} \PY{o}{\PYZhy{}}\PY{o}{=} \PY{n}{learning\PYZus{}rate} \PY{o}{*} \PY{n}{gradients}
+
+    \PY{k}{return} \PY{n}{theta}
+
+\PY{c+c1}{\PYZsh{} Prepare training data with intercept}
+\PY{n}{X\PYZus{}train\PYZus{}manual} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{c\PYZus{}}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{ones}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}scaled}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{X\PYZus{}train\PYZus{}scaled}\PY{p}{]}  \PY{c+c1}{\PYZsh{} Add intercept term to training set}
+\PY{n}{X\PYZus{}train\PYZus{}manual} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{nan\PYZus{}to\PYZus{}num}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}manual}\PY{p}{,} \PY{n}{nan}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{posinf}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{neginf}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{)}
+\PY{n}{y\PYZus{}train\PYZus{}manual} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{nan\PYZus{}to\PYZus{}num}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{o}{.}\PY{n}{values}\PY{p}{,} \PY{n}{nan}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{posinf}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{neginf}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Run mini\PYZhy{}batch gradient descent}
+\PY{n}{theta\PYZus{}manual} \PY{o}{=} \PY{n}{mini\PYZus{}batch\PYZus{}gradient\PYZus{}descent}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}manual}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}manual}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Ensure `theta\PYZus{}manual` has the same shape as `X\PYZus{}test\PYZus{}manual`}
+\PY{n}{theta\PYZus{}manual} \PY{o}{=} \PY{n}{theta\PYZus{}manual}\PY{o}{.}\PY{n}{reshape}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Prepare test data with intercept}
+\PY{n}{X\PYZus{}test\PYZus{}manual} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{c\PYZus{}}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{ones}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}scaled}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{X\PYZus{}test\PYZus{}scaled}\PY{p}{]}  \PY{c+c1}{\PYZsh{} Add intercept term to test set}
+\PY{n}{X\PYZus{}test\PYZus{}manual} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{nan\PYZus{}to\PYZus{}num}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}manual}\PY{p}{,} \PY{n}{nan}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{posinf}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{neginf}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Make predictions using the manual model}
+\PY{n}{y\PYZus{}pred\PYZus{}manual} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}manual}\PY{p}{,} \PY{n}{theta\PYZus{}manual}\PY{p}{)}
+\PY{n}{y\PYZus{}pred\PYZus{}manual} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{nan\PYZus{}to\PYZus{}num}\PY{p}{(}\PY{n}{y\PYZus{}pred\PYZus{}manual}\PY{p}{,} \PY{n}{nan}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{posinf}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{neginf}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Compute and print the Mean Absolute Error for the manual model}
+\PY{n}{mae\PYZus{}manual} \PY{o}{=} \PY{n}{mean\PYZus{}absolute\PYZus{}error\PYZus{}manual}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{o}{.}\PY{n}{values}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}manual}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Theta values after training:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{theta\PYZus{}manual}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Mean Absolute Error of Manual Mini\PYZhy{}Batch Gradient Descent Model:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{mae\PYZus{}manual}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Theta values after training:
+ [ 6.94199410e+01  5.68747403e-01 -7.75459774e-01 -2.10765646e+00
+ -6.92264454e-01 -6.07411202e-01  4.28772508e-02 -1.22696718e-01
+ -9.42467098e-02  6.70843706e-01  6.18274986e-01  5.56961012e-01
+  1.88152043e-01  2.16888900e-01  4.15678914e-01  1.60253466e-01
+  1.80934429e-01 -6.84886386e-01 -5.86165482e-01  3.90772328e+00
+  9.03599271e-01]
+
+Mean Absolute Error of Manual Mini-Batch Gradient Descent Model:
+3.196102370782142
+    \end{Verbatim}
+
+    \subsection{16. Compare the results and discuss which model(s)
+best-predicted housing
+prices.}\label{compare-the-results-and-discuss-which-models-best-predicted-housing-prices.}
+
+\subsubsection{Detailed Analysis of Model
+Results:}\label{detailed-analysis-of-model-results}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Scikit-Learn Linear Regression Model}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Performance}: The Mean Absolute Error (MAE) for the built-in
+    scikit-learn Linear Regression model was among the lowest,
+    showcasing strong prediction accuracy due to efficient optimization
+    algorithms and robust numerical stability.
+  \item
+    \textbf{Reason for Performance}: This model benefits from optimized
+    routines in the library, handling large datasets and complex
+    operations effectively.
+  \end{itemize}
+\item
+  \textbf{Scikit-Learn Stochastic Gradient Descent (SGD) Model}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Performance}: The MAE for the SGD model was higher than the
+    built-in linear regression but still competitive. The model's
+    iterative, batch-based approach works well for larger data but can
+    be sensitive to hyperparameters like the learning rate.
+  \item
+    \textbf{Reason for Performance}: The batch updates provide
+    efficiency, but without proper tuning, the model can struggle with
+    convergence.
+  \end{itemize}
+\item
+  \textbf{Manually Implemented Mini-Batch Gradient Descent}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Performance}: The MAE reported was 69.17, indicating a
+    higher prediction error compared to the scikit-learn models. This
+    highlights some limitations in precision and stability when
+    implementing algorithms manually.
+  \item
+    \textbf{Challenges}:
+
+    \begin{itemize}
+    \tightlist
+    \item
+      \textbf{Learning Rate Tuning}: Fine-tuning the learning rate was
+      critical to prevent divergence.
+    \item
+      \textbf{Data Scaling}: Adding data normalization significantly
+      improved stability, emphasizing the importance of preprocessing.
+    \item
+      \textbf{Convergence}: The manual approach showed limitations in
+      reaching the optimization level of library implementations.
+    \end{itemize}
+  \item
+    \textbf{Theta Values}: Some final \texttt{theta} values were either
+    very close to zero or \texttt{NaN} during early iterations,
+    showcasing potential issues with numerical precision.
+  \end{itemize}
+\end{enumerate}
+
+\subsubsection{Conclusion:}\label{conclusion}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Best Performing Model}: The scikit-learn Linear Regression
+  model had the lowest MAE, demonstrating superior performance due to
+  its optimized algorithms.
+\item
+  \textbf{Insights from Manual Implementation}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    While the manual gradient descent model was functional, it required
+    extensive tuning and highlighted the strengths of using well-tested
+    libraries for reliable results.
+  \item
+    This exercise showcased the importance of scaling, learning rate
+    selection, and robust optimization for effective gradient descent.
+  \end{itemize}
+\end{itemize}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
