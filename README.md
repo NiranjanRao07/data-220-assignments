@@ -1,5 +1,3 @@
-Here's a concise README for your **DATA 220** repository:
-
 ---
 
 # DATA 220 - Mathematical and Statistical Methods for Data Analytics
